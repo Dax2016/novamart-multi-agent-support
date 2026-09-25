@@ -82,14 +82,17 @@ def _load_cf_exports() -> dict:
 
 
 def _get(key: str, fallback_env: str = None) -> str:
-    """Get a CloudFormation export value, with optional env var fallback."""
+    """Get a resource value from environment first, then CloudFormation."""
+    if fallback_env:
+        value = os.environ.get(fallback_env, '')
+        if value:
+            return value
+
     value = _load_cf_exports().get(f"{PROJECT_NAME}-{key}")
-    if not value and fallback_env:
-        value = os.environ.get(fallback_env)
     if not value:
         raise ConfigError(
-            f"Could not find CloudFormation export '{PROJECT_NAME}-{key}'. "
-            f"Ensure the infrastructure stack is deployed (and up to date)."
+            f"Could not find resource '{key}' in environment or "
+            f"CloudFormation export '{PROJECT_NAME}-{key}'."
         )
     return value
 
@@ -141,12 +144,12 @@ _LAZY = {
     'ACCOUNT_ID':           _account_id,
 
     # DynamoDB
-    'ORDERS_TABLE':         lambda: _get('OrdersTable'),
-    'CUSTOMERS_TABLE':      lambda: _get('CustomersTable'),
-    'WORKFLOW_STATE_TABLE': lambda: _get('WorkflowStateTable'),
+    'ORDERS_TABLE':         lambda: _get('OrdersTable', 'ORDERS_TABLE'),
+    'CUSTOMERS_TABLE':      lambda: _get('CustomersTable', 'CUSTOMERS_TABLE'),
+    'WORKFLOW_STATE_TABLE': lambda: _get('WorkflowStateTable', 'WORKFLOW_STATE_TABLE'),
 
     # S3 (policy documents + deployment artifacts)
-    'POLICY_BUCKET':        lambda: _get('PolicyBucket'),
+    'POLICY_BUCKET':        lambda: _get('PolicyBucket', 'POLICY_BUCKET'),
 
     # S3 Vectors (Knowledge Base backing store - Task 5)
     'VECTOR_STORE_BUCKET':  lambda: _get('VectorBucket'),
@@ -156,10 +159,10 @@ _LAZY = {
     'WARRANTY_VECTOR_INDEX': lambda: _get('WarrantyVectorIndex'),
 
     # IAM
-    'AGENTCORE_ROLE_ARN':   lambda: _get('AgentCoreRoleArn'),
+    'AGENTCORE_ROLE_ARN':   lambda: _get('AgentCoreRoleArn', 'AGENTCORE_ROLE_ARN'),
 
     # CloudWatch
-    'AGENT_LOG_GROUP':      lambda: _get('AgentLogGroup'),
+    'AGENT_LOG_GROUP':      lambda: _get('AgentLogGroup', 'AGENT_LOG_GROUP'),
 
     # Bedrock Knowledge Base IDs (Task 5) - .env first, CloudFormation export second
     'RETURNS_KB_ID':        lambda: _get_kb_id('ReturnsKbId',  'RETURNS_KB_ID'),

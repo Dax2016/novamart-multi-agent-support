@@ -26,3 +26,16 @@ __pycache__/
 payload.json
 response.json
 build/
+
+# Local inspection and debugging artifacts
+*.bak
+*_current.txt
+policy_trace.json
+xray_full.json
+xray_documents.txt
+retrieval-*.json
+guardrail_test_results.txt
+
+# Local virtual environments
+.venv/
+venv/
