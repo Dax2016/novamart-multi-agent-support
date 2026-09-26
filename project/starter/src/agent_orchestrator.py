@@ -549,7 +549,7 @@ def build_policy_agent() -> Agent:
         """Retrieve relevant passages from the Returns Policy knowledge base."""
         results = retrieve_from_knowledge_base(
             query=query,
-            knowledge_base_id=config.RETURNS_KB_ID,
+            kb_id=config.RETURNS_KB_ID,
         )
         return format_kb_results(results)
 
@@ -585,7 +585,7 @@ Do not make eligibility decisions.
         """Retrieve relevant passages from the Shipping Policy knowledge base."""
         results = retrieve_from_knowledge_base(
             query=query,
-            knowledge_base_id=config.SHIPPING_KB_ID,
+            kb_id=config.SHIPPING_KB_ID,
         )
         return format_kb_results(results)
 
@@ -620,7 +620,7 @@ Do not make unsupported assumptions.
         """Retrieve relevant passages from the Warranty Policy knowledge base."""
         results = retrieve_from_knowledge_base(
             query=query,
-            knowledge_base_id=config.WARRANTY_KB_ID,
+            kb_id=config.WARRANTY_KB_ID,
         )
         return format_kb_results(results)
 
@@ -2213,3 +2213,4 @@ if __name__ == '__main__':
         print("  python src/agent_orchestrator.py chat             # Interactive terminal chat")
         print("  python src/agent_orchestrator.py invoke \"<msg>\"   # Call the deployed runtime")
         print("  python src/agent_orchestrator.py serve            # HTTP server (used inside AgentCore Runtime)")
+
